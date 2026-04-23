@@ -89,9 +89,6 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
   }
     
 
-
-  
-
   /**
    * Returns a sorted list of all values reachable from the given starting vertex in the provided graph.
    * The graph is represented as a map where each key is a vertex and its corresponding value is a set of neighbors.
@@ -103,8 +100,25 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
    * @return a sorted list of all reachable vertex values
    */
   public static List<Integer> sortedReachable(Map<Integer, Set<Integer>> graph, int starting) {
-    return null;
+    // return null;
+    if (!graph.containsKey(starting)) return new ArrayList<>();
+    List<Integer> result = new ArrayList<>();
+    Set<Integer> visited = new HashSet<>();
+    dfsCollect(graph, starting, visited, result);
+    Collections.sort(result);
+    return result;
   }
+  private static void dfsCollect(Map<Integer, Set<Integer>> graph, 
+                      int current, Set<Integer> visited, List<Integer> result){
+    if(visited.contains(current)) return;
+    visited.add(current);
+    result.add(current);
+    
+    for (int neighbor : graph.getOrDefault(current, new HashSet<>())) {
+      dfsCollect(graph, neighbor, visited, result);
+    }  
+    }
+ 
 
   /**
    * Returns true if and only if it is possible both to reach v2 from v1 and to reach v1 from v2.
@@ -121,6 +135,24 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
    * @return true if there is a two-way connection between v1 and v2, false otherwise
    */
   public static <T> boolean twoWay(Vertex<T> v1, Vertex<T> v2) {
+    // return false;
+
+    if (v1 == null || v2 == null) return false;
+    if (v1 == v2) return true;
+
+    return canReach(v1, v2, new HashSet<>()) && canReach(v2, v1, new HashSet<>());
+  }
+  private static <T> boolean canReach (Vertex<T> current, Vertex<T> target, Set<Vertex<T>> visited) {
+    if (visited.contains(current)) return false;
+
+    if (current == target) return true;
+    visited.add(current);
+
+    for (Vertex<T> neightbor : current.neighbors) {
+      if (canReach(neightbor, target, visited)) {
+        return true;
+      }
+    }
     return false;
   }
 
