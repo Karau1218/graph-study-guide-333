@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,8 +27,24 @@ public class Practice {
    * @param starting the starting vertex (may be null)
    * @return the number of vertices with odd values reachable from the starting vertex
    */
+
+  // NOTES: So basically return count of vertices (nodes) with odd values from the given vertex - include the startubng
+  // use set visited to store the nodes we visit, 
+  // each node we check if its odd, if odd, count 1 or else 0
+  // then visit neighbors and add their counts 
   public static int oddVertices(Vertex<Integer> starting) {
-    return 0;
+    return countOdds(starting, new HashSet<>());
+  }
+private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited) {
+    if (node == null || visited.contains(node)) return 0;
+    
+    visited.add(node);
+
+    int count = (node.data % 2 != 0) ? 1 : 0; // count 1 or or count 0
+    for (Vertex<Integer> neighbor : node.neighbors) {
+      count += countOdds(neighbor, visited);
+    }
+    return count;
   } 
 
   /**
@@ -46,9 +65,32 @@ public class Practice {
    * @param starting the starting vertex (may be null)
    * @return a sorted list of all reachable vertex values by 
    */
+  // NOTES: If vertex == null --> emptylist,
+  // we need a list to store the reachable values, asnd we need to track the visited loops(hashset) 
   public static List<Integer> sortedReachable(Vertex<Integer> starting) {
-    return null;
+    // return null;
+    if (starting == null) return new ArrayList<>(); // empty list
+    List<Integer> result = new ArrayList<>();
+    Set<Vertex<Integer>> visited = new HashSet();
+    dfsCollect(starting, visited, result);
+    Collections.sort(result);
+    return result;
   }
+  private static void dfsCollect(Vertex<Integer> current,
+                                  Set<Vertex<Integer>> visited, List<Integer> result) {
+    if (current == null || visited.contains(current)) return;
+
+    visited.add(current);
+    result.add(current.data);
+
+    for (Vertex<Integer> neighbor : current.neighbors) {
+      dfsCollect(neighbor, visited, result);
+    }
+  }
+    
+
+
+  
 
   /**
    * Returns a sorted list of all values reachable from the given starting vertex in the provided graph.
