@@ -26,7 +26,7 @@ public class Practice {
    */
   public static int oddVertices(Vertex<Integer> starting) {
     return 0;
-  }
+  } 
 
   /**
    * Returns a *sorted* list of all values reachable from the starting vertex (including the starting vertex itself).
