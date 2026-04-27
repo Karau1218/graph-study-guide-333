@@ -101,15 +101,21 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
    */
   public static List<Integer> sortedReachable(Map<Integer, Set<Integer>> graph, int starting) {
     // return null;
+    // if the starting node is nto in a graph return empty array lst
     if (!graph.containsKey(starting)) return new ArrayList<>();
+    // list to store the results
     List<Integer> result = new ArrayList<>();
+    // track visited nodes
     Set<Integer> visited = new HashSet<>();
+    // srart traversal
+    // sort the result alphabetically
     dfsCollect(graph, starting, visited, result);
     Collections.sort(result);
     return result;
   }
   private static void dfsCollect(Map<Integer, Set<Integer>> graph, 
                       int current, Set<Integer> visited, List<Integer> result){
+    // stop if already visitef
     if(visited.contains(current)) return;
     visited.add(current);
     result.add(current);
@@ -139,12 +145,11 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
 
     if (v1 == null || v2 == null) return false;
     if (v1 == v2) return true;
-
     return canReach(v1, v2, new HashSet<>()) && canReach(v2, v1, new HashSet<>());
   }
+
   private static <T> boolean canReach (Vertex<T> current, Vertex<T> target, Set<Vertex<T>> visited) {
     if (visited.contains(current)) return false;
-
     if (current == target) return true;
     visited.add(current);
 
@@ -169,8 +174,33 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
    * @return whether there exists a valid positive path from starting to ending
    */
   public static boolean positivePathExists(Map<Integer, Set<Integer>> graph, int starting, int ending) {
-    return false;
+    // return false;
+    
+    if (!graph.containsKey(starting) || !graph.containsKey(ending)) return false;
+    if (starting <= 0 || ending <= 0) return false;
+
+    Set<Integer> visited = new HashSet<>();
+
+    return dfs(graph, starting, ending, visited);
   }
+  private static boolean dfs(Map<Integer, Set<Integer>> graph, int current, int target,
+                                          Set<Integer> visited) {
+
+    if(visited.contains(current)) return false;
+
+    if (current <= 0) return false;
+    if (current == target) return true;
+    visited.add(current);
+
+    for (int neighbor : graph.getOrDefault(current, new HashSet<>())) {
+      if (dfs(graph, neighbor, target, visited)) {
+        return true;
+      }
+    }
+        return false;
+}
+                                        
+  
 
   /**
    * Returns true if a professional has anyone in their extended network (reachable through any number of links)
@@ -182,6 +212,30 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
    * @return true if a person in the extended network works at the specified company, false otherwise
    */
   public static boolean hasExtendedConnectionAtCompany(Professional person, String companyName) {
+    // return false;
+    if (person == null) return false;
+
+    Set<Professional> visited = new HashSet<>();
+
+    return dfs(person, companyName, visited);
+  }
+
+  private static boolean dfs(Professional current, String companyName, Set<Professional> visited) {
+
+    // if already visited, stop
+    if(visited.contains(current)) return false;
+    visited.add(current);
+
+    // check if current works in the company
+    if(current.getCompany().equals(companyName)) {
+      return true;
+    }
+
+    for(Professional neighbor : current.getConnections()) {
+      if (dfs(neighbor, companyName, visited)) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -253,6 +307,24 @@ private static int countOdds(Vertex<Integer> node, Set<Vertex<Integer>> visited)
    * @return an unsorted list of next moves
    */
   public static List<int[]> nextMoves(char[][] board, int[] current, int[][] directions) {
-    return null;
+    // return null;
+    List<int[]> result = new ArrayList<>();
+    int row = current[0];
+    int col = current[1];
+
+    for (int[] dir : directions) {
+      
+      int newRow = row + dir[0];
+      int newCol = col + dir[1];
+
+      if (newRow >= 0 && newRow < board.length && 
+          newCol >= 0 && newCol < board[0].length) {
+
+            if (board[newRow][newCol] != 'X') {
+              result.add(new int[] { newRow, newCol});
+            }
+          }
+      }
+      return result;
   }
 }
